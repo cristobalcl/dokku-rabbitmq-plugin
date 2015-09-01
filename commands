@@ -165,12 +165,12 @@ case "$1" in
             exit 0
         fi
         ID=$(docker ps -a | grep "$CONTAINER_NAME" |  awk '{print $1}')
-        #IP=$(docker inspect $ID | grep IPAddress | awk '{ print $2 }' | tr -d ',"')
+        IP=$(docker inspect $ID | grep IPAddress | awk '{ print $2 }' | tr -d ',"')
         RABBITMQ_PASSWORD=$(cat "$HOST_DIR/pwd")
 
         dokku link:create "$APP" "$CONTAINER_NAME" "$PLUGIN_ALIAS"
         # Write BROKER_URL to app's ENV file using dokku command
-        dokku config:set $APP "BROKER_SCHEME=amqp" "BROKER_USERNAME=admin" "BROKER_PASSWORD=${RABBITMQ_PASSWORD}" "BROKER_PATH=//" "BROKER_HOST=${RABBITMQ_PORT}" "BROKER_AMQP_PORT=${RABBITMQ_PORT}" "BROKER_ADMIN_PORT=${RABBITMQ_ADMIN_PORT}" "BROKER_URL=amqp://admin:${RABBITMQ_PASSWORD}@${RABBITMQ_PORT}:${RABBITMQ_ADMIN_PORT}//"
+        dokku config:set $APP "BROKER_SCHEME=amqp" "BROKER_USERNAME=admin" "BROKER_PASSWORD=${RABBITMQ_PASSWORD}" "BROKER_PATH=//" "BROKER_HOST=${IP}" "BROKER_AMQP_PORT=${RABBITMQ_PORT}" "BROKER_ADMIN_PORT=${RABBITMQ_ADMIN_PORT}" "BROKER_URL=amqp://admin:${RABBITMQ_PASSWORD}@${IP}:${RABBITMQ_ADMIN_PORT}//"
         echo
         echo "-----> $APP linked to $CONTAINER_NAME container"
     fi
